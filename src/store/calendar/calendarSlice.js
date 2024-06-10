@@ -5,22 +5,23 @@ import { addHours } from 'date-fns';
 
 
 
-const tempEvent = {
-    _id: new Date().getTime(),
+/* const tempEvent = {
+    id: new Date().getTime(),
     title: 'Cumpleaños del jefe',
     notes: 'Hay que comprar el pastel',
     start: new Date(),
     end: addHours(new Date, 2),
     bgColor: '#fafafa',
     user: {
-        _id: '123',
+        id: '123',
         name: 'Dani'
     }
-}
+} */
 
 const initialState = {
+    isLoadingEvents: true,
     events: [
-        tempEvent
+        /* tempEvent */
     ],
     activeEvent: null,
 }
@@ -41,7 +42,7 @@ export const calendarSlice = createSlice({
                 end: addHours(new Date, 2),
                 bgColor: '#fafafa',
                 user: {
-                    _id: '123',
+                    id: '123',
                     name: 'Dani'
                 }
             }
@@ -52,13 +53,29 @@ export const calendarSlice = createSlice({
         },
         onUpdateEvent: (state, {payload})=>{
             state.events = state.events.map(event => 
-                (event._id === payload._id) ? payload : event);
+                (event.id === payload.id) ? payload : event);
         },
         onDeleteEvent: (state)=>{
             if (state.activeEvent){
-                state.events = state.events.filter(event => event._id !== state.activeEvent._id);
+                state.events = state.events.filter(event => event.id !== state.activeEvent.id);
                 state.activeEvent = null;
             }
+        },
+        onLoadEvents: (state, {payload=[]})=>{
+            state.isLoadingEvents = false;
+            //state.events = payload;
+            payload.forEach(event => {
+                // Obtiene true si el evento obtenido existe en el estado
+                const exists = state.events.some(dbEvent => dbEvent.id === event.id);
+                // Si el evento no existe, lo añade al estado
+                if (!exists)
+                    state.events.push(event);
+            });
+        },
+        onLogoutCalendar: (state)=>{
+            state.isLoadingEvents = initialState.isLoadingEvents;
+            state.events = initialState.events;
+            state.activeEvent = initialState.activeEvent;
         },
     }
 });
@@ -66,9 +83,11 @@ export const calendarSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-    onCleanActiveEvent,
-    onSetActiveEvent, 
     onAddNewEvent,
-    onUpdateEvent,
+    onCleanActiveEvent,
     onDeleteEvent,
+    onLoadEvents,
+    onLogoutCalendar,
+    onSetActiveEvent, 
+    onUpdateEvent,
 } = calendarSlice.actions;
