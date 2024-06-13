@@ -1,0 +1,77 @@
+Ejecutar el comando:
+yarn add vite-plugin-pwa
+
+
+1. En vite.config.js: (La configuración sirve para usar en modo desarrollo, así no toca hacer build cada vez)
+
+Añadir la importación:
+import { VitePWA } from "vite-plugin-pwa";
+
+
+Añadir al array de plugins (justo despues de react()):
+
+VitePWA({
+    registerType: "autoUpdate",
+    devOptions: {
+      enabled: true,
+      type: "module",
+      navigateFallback: "index.html",
+      suppressWarnings: true,
+    },
+    strategies: "injectManifest",
+    srcDir: "src",
+    filename: "sw.js",
+}),
+
+
+
+
+2. Crear el archivo /src/sw.js:
+
+import {
+    cleanupOutdatedCaches,
+    createHandlerBoundToURL,
+    precacheAndRoute,
+} from "workbox-precaching";
+import { clientsClaim } from "workbox-core";
+import { NavigationRoute, registerRoute } from "workbox-routing";
+  
+
+cleanupOutdatedCaches();
+
+// self.__WB_MANIFEST is default injection point
+precacheAndRoute(self.__WB_MANIFEST);
+
+// to allow work offline
+registerRoute(
+  new NavigationRoute(createHandlerBoundToURL("index.html"), {
+    denylist: [/^\/backoffice/],
+  })
+);
+
+self.skipWaiting();
+
+clientsClaim();
+
+self.addEventListener("install", async (event) => {
+  const cache = await caches.open("cache-1");
+  await cache.addAll([
+    // Aquí lo que se quiere llevar al cache
+  ]);
+});
+
+
+
+
+3. Instalar paquetes y agragar a las dependencias de desarrollo:
+workbox-core
+workbox-routing
+workbox-strategies
+workbox-build
+
+
+Se puede usar en modo desarrollo, se crea una carpeta 
+automáticamente dev-dist y se pueden hacer cambios en caliente 
+al src/sw.js o al vite.config.js e ir viendo los efectos.
+
+Si haces build, con el vite preview se puede usar también.

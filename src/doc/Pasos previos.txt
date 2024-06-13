@@ -1,0 +1,7 @@
+VITE
+
+Para hacer el build de producción:
+yarn build
+
+Para cargar el build de producción creado en el navegador:
+yarn preview
