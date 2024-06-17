@@ -1,3 +1,14 @@
+VITE
+
+Para hacer el build de producción:
+yarn build
+
+Para cargar el build de producción creado en el navegador:
+yarn preview
+
+
+
+
 Ejecutar el comando:
 yarn add vite-plugin-pwa
 
@@ -70,8 +81,8 @@ workbox-strategies
 workbox-build
 
 
-Se puede usar en modo desarrollo, se crea una carpeta 
-automáticamente dev-dist y se pueden hacer cambios en caliente 
+Se puede usar en modo desarrollo (yarn start o yarn dev), se crea una 
+carpeta automáticamente dev-dist y se pueden hacer cambios en caliente 
 al src/sw.js o al vite.config.js e ir viendo los efectos.
 
-Si haces build, con el vite preview se puede usar también.
+Si se hace build (yarn build), con el preview (yarn preview) se puede usar.
